@@ -21,14 +21,14 @@ void setup() {
 void SetLedBrightness(int which, int r, int g, int b, int brightness)
 {
   ledBrightness[which] = brightness;
-  leds[which].setRGB(r*brightness/255, g*brightness/255,b*brightness/255);
+  leds[which].setRGB(r * brightness / 255, g * brightness / 255, b * brightness / 255);
 }
 
 void GradualRise()
 {
   //-- Turn them all off --
   for (int i = 0; i < NUM_LEDS; i++)
-    SetLedBrightness(i, 0,0,0, 0);
+    SetLedBrightness(i, 0, 0, 0, 0);
   FastLED.show();
 
   int brightnessDelay = 100; // Larger = slower
@@ -45,7 +45,7 @@ void GradualRise()
     {
       if (ledBrightness[i] < 255)
         ledBrightness[i]++;
-      SetLedBrightness(i, 255,255,255, ledBrightness[i]);
+      SetLedBrightness(i, 255, 255, 255, ledBrightness[i]);
     }
 
     // When we've increased brightness enough, include the next higher LED.
@@ -64,7 +64,7 @@ void GradualRise()
 void Fall()
 {
   for (int i = 0; i < NUM_LEDS; i++) {
-    SetLedBrightness(NUM_LEDS - 1 - i, 0,0,0, 0);
+    SetLedBrightness(NUM_LEDS - 1 - i, 0, 0, 0, 0);
     FastLED.delay(100);
   }
 }
@@ -72,32 +72,73 @@ void Fall()
 void Rise(int r, int g, int b)
 {
   for (int i = 0; i < NUM_LEDS; i++) {
-    SetLedBrightness(i, r,g,b, 255);
+    SetLedBrightness(i, r, g, b, 255);
     FastLED.delay(100);
   }
 }
 
-void loop() {
-  for (int c=0; c<4; c++)
+void ColorTests()
+{
+  for (int c = 0; c < 4; c++)
   {
-    int cr=0, cg=0,cb = 0;
+    int cr = 0, cg = 0, cb = 0;
     switch (c) {
-      case 0: cr=255; break;
-      case 1: cg=255; break;
-      case 2: cb=255; break;
-      case 3: cr=cg=cb=255; break;
+      case 0: cr = 255; break;
+      case 1: cg = 255; break;
+      case 2: cb = 255; break;
+      case 3: cr = cg = cb = 255; break;
     }
-    Rise(cr,cg,cb);
+    Rise(cr, cg, cb);
     delay(2000); // Enjoy the glory for two seconds before repeating
-    
+
     Fall();
-    delay(1000); // Enjoy the silence    
+    delay(1000); // Enjoy the silence
   }
-  
-  GradualRise();
-  delay(1000); // Enjoy the silence
-  
-  Fall();
-  delay(2000); // Enjoy the silence
+}
+
+void DripDrip()
+{
+  for (int r = 0; r < 3; r++) {
+    for (int i = 0; i < NUM_LEDS; i++) {
+      int y = NUM_LEDS - 1 - i;
+      leds[y] = CRGB::White;
+      FastLED.delay(80);
+      leds[y] = CRGB::Black;
+      FastLED.show();
+    }
+    delay(500);
+  }
+}
+
+void SetAll(CRGB c)
+{
+  for (int i = 0; i < NUM_LEDS; i++) {
+    leds[i] = c;
+    FastLED.show();
+  }
+}
+
+void Blink()
+{
+  SetAll(CRGB::White);
+  FastLED.delay(1000);
+  SetAll(CRGB::Black);
+  FastLED.delay(1000);
+}
+void loop() {
+  //-- Demo 1 --
+  Blink();
+
+  //-- Demo 2 --
+//  DripDrip();
+
+  //-- Demo 3 --
+//    ColorTests();
+//  
+//    GradualRise();
+//    delay(1000); // Enjoy the silence
+//  
+//    Fall();
+//    delay(2000); // Enjoy the silence
 }
 
