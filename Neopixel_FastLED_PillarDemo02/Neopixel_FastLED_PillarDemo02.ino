@@ -18,22 +18,23 @@ void WaitForTouchOrig()
   while (total1 < 200)
   {
     total1 =  cs_4_2.capacitiveSensor(30);
-  } 
+  }
 }
 
 void WaitForTouch()
 {
   int v = 0;
   do {
-    v = digitalRead(2); 
-    delay(100);   
+    v = digitalRead(2);
+    delay(50);
   } while (v == HIGH);
+    delay(200);
 }
 
 void setup() {
   cs_4_2.set_CS_AutocaL_Millis(0xFFFFFFFF);     // turn off autocalibrate on channel 1 - just as an example
-  pinMode(2,INPUT_PULLUP);
-  
+  pinMode(2, INPUT_PULLUP);
+
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
   colors[0] = CRGB::Red;
   colors[1] = CRGB::Green;
@@ -193,27 +194,22 @@ void Constant(CRGB c)
 }
 
 void loop() {
-  Constant(CRGB::Red);
+  Constant(CRGB::Red); WaitForTouch();
+  Constant(CRGB::Green); WaitForTouch();
+  Constant(CRGB::Blue); WaitForTouch();
+  Fall();  WaitForTouch();
+
+  Rise(255, 0, 0);  WaitForTouch();
+  Fall();  WaitForTouch();
+
+  Rise(0, 255, 0);  WaitForTouch();
+  Fall();  WaitForTouch();
+
+  Rise(0, 0, 255);  WaitForTouch();
+  Fall();  WaitForTouch();
+
+  for (byte i = 0; i < 4; i++) Bounce();
+  Constant(CRGB::Black);
   WaitForTouch();
-  
-  //-- Demo 1 --
-  //Blink();
-
-  //-- Demo 2 --
-//  DripDrip();
-
-  //-- Demo 3 --
-    ColorTests();
-    WaitForTouch();
-
-    for (byte i=0; i<4;i++) Bounce();
-    Constant(CRGB::Black);
-    WaitForTouch();
-//  
-//    GradualRise();
-//    delay(1000); // Enjoy the silence
-//  
-//    Fall();
-//    delay(2000); // Enjoy the silence
 }
 
