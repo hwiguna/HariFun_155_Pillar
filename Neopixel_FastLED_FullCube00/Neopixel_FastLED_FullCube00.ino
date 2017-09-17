@@ -32,7 +32,6 @@ void setup() {
   colors[2] = CRGB::Blue;
   colors[3] = CRGB::White;
 
-  Constant(CRGB::Black); FastLED.delay(1000);
   FastLED.setBrightness(255);
 }
 
@@ -138,63 +137,24 @@ void SetAll(CRGB c)
 {
   for (int i = 0; i < NUM_LEDS; i++) {
     leds[i] = c;
-    FastLED.show();
+    //FastLED.show();
   }
 }
 
-void Blink()
+void Blink(CRGB c)
 {
-  SetAll(CRGB::Blue);
+  SetAll(c);
   FastLED.delay(1000);
   SetAll(CRGB::Black);
   FastLED.delay(1000);
 }
-
-
-void Blink1()
-{
-  int i = 63;
-  leds[i] = CRGB::Blue;
-  FastLED.delay(1000);
-  leds[i] = CRGB::Black;
-  FastLED.delay(1000);
-}
-
-void BlinkN()
-{
-  int height = 8;
-  int width = 8;
-  int depth = 8;
-  for (int x = 0; x < width; x++)
-    for (int y = 0; y < height; y++)
-      for (int z = 0; z < depth; z++)
-        leds[ ToIndex(x, y, z) ] = CRGB::Red;
-  FastLED.delay(2000);
-
-  for (int x = 0; x < width; x++)
-    for (int y = 0; y < height; y++)
-      for (int z = 0; z < depth; z++)
-        leds[ ToIndex(x, y, z) ] = CRGB::Black;
-  FastLED.delay(1000);
-}
-
-
-void OneAtATime()
-{
-  for (int i = 0; i < NUM_LEDS; i++) {
-    leds[ i ] = CRGB::Blue;
-    FastLED.delay(100);
-    leds[ i ] = CRGB::Black;
-  }
-}
-
 
 void Bounce()
 {
   //== Up ==
   for (int y = 0; y < 8; y++) {
     for (int x = 0; x < 8; x++) {
-      leds[ ToIndex(x, y, 0) ] = CRGB::Blue;
+      leds[ ToIndex(x, y, 0) ] = CRGB::White;
     }
     FastLED.show();
     FastLED.delay(70);
@@ -274,26 +234,8 @@ void Explode()
 
 void SetPlane(int y, CRGB c)
 {
-  for (int z = 0; z < 8; z++) {
+  for (int z = 0; z < 1; z++) {
     for (int x = 0; x < 8; x++) {
-      leds[ ToIndex(x, y, z) ] = c;
-    }
-  }
-}
-
-void SetPlaneZ(int z, CRGB c)
-{
-  for (int x = 0; x < 8; x++) {
-    for (int y = 0; y < 8; y++) {
-      leds[ ToIndex(x, y, z) ] = c;
-    }
-  }
-}
-
-void SetPlaneX(int x, CRGB c)
-{
-  for (int y = 0; y < 8; y++) {
-    for (int z = 0; z < 8; z++) {
       leds[ ToIndex(x, y, z) ] = c;
     }
   }
@@ -337,18 +279,15 @@ void July4()
 }
 
 void BenchTest()
-{ int onTime = 700;
-
-  Constant(CRGB::Red); FastLED.delay(onTime);
-  //Constant(CRGB::Black); FastLED.delay(300);
-
-  Constant(CRGB::Green); FastLED.delay(onTime);
-  //Constant(CRGB::Black); FastLED.delay(300);
-
-  Constant(CRGB::Blue); FastLED.delay(onTime);
-  //Constant(CRGB::Black); FastLED.delay(300);
-
-  Constant(CRGB::White); FastLED.delay(onTime);
+{
+  Constant(CRGB::Red); FastLED.delay(500);
+  Constant(CRGB::Black); FastLED.delay(300);
+  Constant(CRGB::Green); FastLED.delay(500);
+  Constant(CRGB::Black); FastLED.delay(300);
+  Constant(CRGB::Blue); FastLED.delay(500);
+  Constant(CRGB::Black); FastLED.delay(300);
+  Constant(CRGB::White); FastLED.delay(100);
+  Constant(CRGB::Black); FastLED.delay(300);
 }
 
 void HorizAt(byte x, byte y, byte z, byte width, CRGB c)
@@ -413,73 +352,69 @@ void Vortey()
   }
 }
 
-void BouncePlaneZ()
+void OneAtATime(CRGB bgColor, CRGB pixelColor)
 {
-  int rate = 100;
-
-  //== Away ==
-  for (int z = 0; z < 8; z++) {
-    SetPlaneZ(z, CRGB::Red);
-    FastLED.delay(rate);
-    SetPlaneZ(z, CRGB::Black);
-  }
-
-  //== Towards ==
-  for (int z = 6; z > 1; z--) {
-    SetPlaneZ(z, CRGB::Red);
-    FastLED.delay(rate);
-    SetPlaneZ(z, CRGB::Black);
+  for (byte z = 0; z < 8 - 4; z++) {
+    for (byte y = 0; y < 8; y++) {
+      //      for (int x = 0; x < 8; x++) {
+      //        int i = ToIndex(x, y, z);
+      //        leds[ i ] = pixelColor;
+      //        FastLED.delay(100);
+      //        leds[ i ] = bgColor;
+      //        //FastLED.delay(100);
+      //      }
+      HorizAt(0, y, z, 8, pixelColor);
+      FastLED.delay(100);
+      HorizAt(0, y, z, 8, bgColor);
+    }
   }
 }
 
-void BouncePlaneX()
+
+void QuarterTest(CRGB bgColor, CRGB pixelColor)
 {
-  int rate = 100;
-
-  //== Away ==
-  for (int z = 0; z < 8; z++) {
-    SetPlaneX(z, CRGB::Red);
-    FastLED.delay(rate);
-    SetPlaneX(z, CRGB::Black);
+  int d = 100;
+  //-- Up Front --
+  for (byte y = 0; y < 8; y++) {
+    HorizAt(0, y, 0, 8, pixelColor); FastLED.delay(d);
+    HorizAt(0, y, 0, 8, bgColor);    //FastLED.delay(d);
+  }
+  //-- Down Back --
+  for (byte y = 0; y < 8; y++) {
+    HorizAt(0, 7-y, 1, 8, pixelColor); FastLED.delay(d);
+    HorizAt(0, 7-y, 1, 8, bgColor);    //FastLED.delay(d);
   }
 
-  //== Towards ==
-  for (int z = 6; z > 1; z--) {
-    SetPlaneX(z, CRGB::Red);
-    FastLED.delay(rate);
-    SetPlaneX(z, CRGB::Black);
+  //-- Left to right Front --
+  for (byte x = 0; x < 8; x++) {
+    VertAt(x, 0, 0, 8, pixelColor); FastLED.delay(d);
+    VertAt(x, 0, 0, 8, bgColor);    //FastLED.delay(d);
   }
-}
-
-void BouncePlane()
-{
-  int rate = 100;
-
-  //== Up ==
-  for (int y = 0; y < 8; y++) {
-    SetPlane(y, CRGB::Red);
-    FastLED.delay(rate);
-    SetPlane(y, CRGB::Black);
+  //-- Right to left back --
+  for (byte x = 0; x < 8; x++) {
+    VertAt(7-x, 0, 1, 8, pixelColor); FastLED.delay(d);
+    VertAt(7-x, 0, 1, 8, bgColor);    //FastLED.delay(d);
   }
-
-  //== Down ==
-  for (int y = 6; y > 1; y--) {
-    SetPlane(y, CRGB::Red);
-    FastLED.delay(rate);
-    SetPlane(y, CRGB::Black);
-  }
+  FastLED.show();
 }
 
 void loop() {
-  //BouncePlane();
-  BouncePlaneX();
-  //BouncePlaneZ();
-  //Blink1();
-  //OneAtATime();
-  //BlinkN();
-  //BenchTest();
+  //Constant(CRGB::Black);
+  Blink(CRGB::Blue);
+
+//  BenchTest();
+//
+//  QuarterTest(CRGB::Black, CRGB::Red);
+//  QuarterTest(CRGB::Black, CRGB::Green);
+//  QuarterTest(CRGB::Black, CRGB::Blue);
+
   //Constant(CRGB::Blue);
   //RectAt(0,0,0, 2,2, CRGB::Red);
-  //Vortex();
+
+//  for (byte i=0; i<5; i++)
+//    Vortex();
+
+  //Constant(CRGB::Black);
+  //OneAtATime(CRGB::Black, CRGB::Red);
 }
 
